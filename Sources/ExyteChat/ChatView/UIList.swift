@@ -11,9 +11,9 @@ public extension Notification.Name {
     static let onScrollToBottom = Notification.Name("onScrollToBottom")
 }
 
-struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
+struct UIList<MessageContent: View, InputView: View, MainHeader: View, Header: View>: UIViewRepresentable {
 
-    typealias MessageBuilderClosure = ChatView<MessageContent, InputView, DefaultMessageMenuAction>.MessageBuilderClosure
+    typealias MessageBuilderClosure = ChatView<MessageContent, InputView, DefaultMessageMenuAction, EmptyView, MainHeader, Header>.MessageBuilderClosure
 
     @Environment(\.chatTheme) private var theme
 
@@ -25,8 +25,8 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
     @Binding var tableContentHeight: CGFloat
 
     var messageBuilder: MessageBuilderClosure?
-    var mainHeaderBuilder: (()->AnyView)?
-    var headerBuilder: ((Date)->AnyView)?
+    var mainHeaderBuilder: (()->MainHeader)?
+    var headerBuilder: ((Date)->Header)?
     var inputView: InputView
 
     let type: ChatType
@@ -362,11 +362,11 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
 
     // MARK: - Coordinator
 
-    func makeCoordinator() -> Coordinator {
+    func makeCoordinator() -> Coordinator<MainHeader, Header> {
         Coordinator(viewModel: viewModel, inputViewModel: inputViewModel, isScrolledToBottom: $isScrolledToBottom, isScrolledToTop: $isScrolledToTop, messageBuilder: messageBuilder, mainHeaderBuilder: mainHeaderBuilder, headerBuilder: headerBuilder, chatTheme: theme, type: type, showDateHeaders: showDateHeaders, avatarSize: avatarSize, showMessageMenuOnLongPress: showMessageMenuOnLongPress, tapAvatarClosure: tapAvatarClosure, paginationHandler: paginationHandler, messageUseMarkdown: messageUseMarkdown, showMessageTimeView: showMessageTimeView, messageFont: messageFont, sections: sections, ids: ids, mainBackgroundColor: theme.colors.mainBackground)
     }
 
-    class Coordinator: NSObject, UITableViewDataSource, UITableViewDelegate {
+    class Coordinator<CoordinatorMainHeader: View, CoordinatorHeader: View>: NSObject, UITableViewDataSource, UITableViewDelegate {
 
         @ObservedObject var viewModel: ChatViewModel
         @ObservedObject var inputViewModel: InputViewModel
@@ -375,8 +375,8 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
         @Binding var isScrolledToTop: Bool
 
         let messageBuilder: MessageBuilderClosure?
-        let mainHeaderBuilder: (()->AnyView)?
-        let headerBuilder: ((Date)->AnyView)?
+        let mainHeaderBuilder: (()->CoordinatorMainHeader)?
+        let headerBuilder: ((Date)->CoordinatorHeader)?
 
         let chatTheme: ChatTheme
         let type: ChatType
@@ -398,7 +398,7 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
         let ids: [String]
         let mainBackgroundColor: Color
 
-        init(viewModel: ChatViewModel, inputViewModel: InputViewModel, isScrolledToBottom: Binding<Bool>, isScrolledToTop: Binding<Bool>, messageBuilder: MessageBuilderClosure?, mainHeaderBuilder: (()->AnyView)?, headerBuilder: ((Date)->AnyView)?, chatTheme: ChatTheme, type: ChatType, showDateHeaders: Bool, avatarSize: CGFloat, showMessageMenuOnLongPress: Bool, tapAvatarClosure: ChatView.TapAvatarClosure?, paginationHandler: PaginationHandler?, messageUseMarkdown: Bool, showMessageTimeView: Bool, messageFont: UIFont, sections: [MessagesSection], ids: [String], mainBackgroundColor: Color, paginationTargetIndexPath: IndexPath? = nil) {
+        init(viewModel: ChatViewModel, inputViewModel: InputViewModel, isScrolledToBottom: Binding<Bool>, isScrolledToTop: Binding<Bool>, messageBuilder: MessageBuilderClosure?, mainHeaderBuilder: (()-> CoordinatorMainHeader)?, headerBuilder: ((Date) -> CoordinatorHeader)?, chatTheme: ChatTheme, type: ChatType, showDateHeaders: Bool, avatarSize: CGFloat, showMessageMenuOnLongPress: Bool, tapAvatarClosure: ChatView.TapAvatarClosure?, paginationHandler: PaginationHandler?, messageUseMarkdown: Bool, showMessageTimeView: Bool, messageFont: UIFont, sections: [MessagesSection], ids: [String], mainBackgroundColor: Color, paginationTargetIndexPath: IndexPath? = nil) {
             self.viewModel = viewModel
             self.inputViewModel = inputViewModel
             self._isScrolledToBottom = isScrolledToBottom
@@ -510,7 +510,7 @@ struct UIList<MessageContent: View, InputView: View>: UIViewRepresentable {
 
             let row = sections[indexPath.section].rows[indexPath.row]
             tableViewCell.contentConfiguration = UIHostingConfiguration {
-                ChatMessageView(viewModel: viewModel, messageBuilder: messageBuilder, row: row, chatType: type, avatarSize: avatarSize, tapAvatarClosure: tapAvatarClosure, messageUseMarkdown: messageUseMarkdown, isDisplayingMessageMenu: false, showMessageTimeView: showMessageTimeView, messageFont: messageFont)
+                ChatMessageView<MessageContent, MainHeader, Header>(viewModel: viewModel, messageBuilder: messageBuilder, row: row, chatType: type, avatarSize: avatarSize, tapAvatarClosure: tapAvatarClosure, messageUseMarkdown: messageUseMarkdown, isDisplayingMessageMenu: false, showMessageTimeView: showMessageTimeView, messageFont: messageFont)
                     .transition(.scale)
                     .background(MessageMenuPreferenceViewSetter(id: row.id))
                     .rotationEffect(Angle(degrees: (type == .conversation ? 180 : 0)))

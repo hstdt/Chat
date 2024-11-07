@@ -9,9 +9,9 @@ import SwiftUI
 import ExyteMediaPicker
 import ActivityIndicatorView
 
-struct AttachmentsEditor<InputViewContent: View>: View {
+struct AttachmentsEditor<InputViewContent: View, BetweenListAndInputView: View, MainHeader: View, Header: View>: View {
 
-    typealias InputViewBuilderClosure = ChatView<EmptyView, InputViewContent, DefaultMessageMenuAction>.InputViewBuilderClosure
+    typealias InputViewBuilderClosure = ChatView<EmptyView, InputViewContent, DefaultMessageMenuAction, BetweenListAndInputView, MainHeader, Header>.InputViewBuilderClosure
 
     @Environment(\.chatTheme) var theme
     @Environment(\.mediaPickerTheme) var pickerTheme

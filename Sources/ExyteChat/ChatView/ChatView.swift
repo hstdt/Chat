@@ -22,7 +22,7 @@ public enum ReplyMode {
     case answer // when replying to message A, new message with appear direclty below message A as a separate cell without duplicating message A in its body
 }
 
-public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction: MessageMenuAction>: View {
+public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction: MessageMenuAction, BetweenListAndInputView: View, MainHeader: View, Header: View>: View {
 
     /// To build a custom message view use the following parameters passed by this closure:
     /// - message containing user, attachments, etc.
@@ -92,13 +92,13 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
     var messageMenuAction: MessageMenuActionClosure?
 
     /// content to display in between the chat list view and the input view
-    var betweenListAndInputViewBuilder: (()->AnyView)?
+    var betweenListAndInputViewBuilder: (()->BetweenListAndInputView)?
 
     /// a header for the whole chat, which will scroll together with all the messages and headers
-    var mainHeaderBuilder: (()->AnyView)?
+    var mainHeaderBuilder: (()->MainHeader)?
 
     /// date section header builder
-    var headerBuilder: ((Date)->AnyView)?
+    var headerBuilder: ((Date)->Header)?
 
     // MARK: - Customization
 
@@ -181,7 +181,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
             }
 
             .fullScreenCover(isPresented: $inputViewModel.showPicker) {
-                AttachmentsEditor(inputViewModel: inputViewModel, inputViewBuilder: inputViewBuilder, chatTitle: chatTitle, messageUseMarkdown: messageUseMarkdown, orientationHandler: orientationHandler, mediaPickerSelectionParameters: mediaPickerSelectionParameters, availableInput: availablelInput)
+                AttachmentsEditor<InputViewContent, BetweenListAndInputView, MainHeader, Header>(inputViewModel: inputViewModel, inputViewBuilder: inputViewBuilder, chatTitle: chatTitle, messageUseMarkdown: messageUseMarkdown, orientationHandler: orientationHandler, mediaPickerSelectionParameters: mediaPickerSelectionParameters, availableInput: availablelInput)
                     .environmentObject(globalFocusState)
             }
 
@@ -375,7 +375,7 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
             leadingPadding: avatarSize + MessageView.horizontalAvatarPadding * 2,
             trailingPadding: MessageView.statusViewSize + MessageView.horizontalStatusPadding,
             onAction: menuActionClosure(row.message)) {
-                ChatMessageView(viewModel: viewModel, messageBuilder: messageBuilder, row: row, chatType: type, avatarSize: avatarSize, tapAvatarClosure: nil, messageUseMarkdown: messageUseMarkdown, isDisplayingMessageMenu: true, showMessageTimeView: showMessageTimeView, messageFont: messageFont)
+                ChatMessageView<MessageContent, MainHeader, Header>(viewModel: viewModel, messageBuilder: messageBuilder, row: row, chatType: type, avatarSize: avatarSize, tapAvatarClosure: nil, messageUseMarkdown: messageUseMarkdown, isDisplayingMessageMenu: true, showMessageTimeView: showMessageTimeView, messageFont: messageFont)
                     .onTapGesture {
                         hideMessageMenu()
                     }
@@ -451,26 +451,26 @@ public struct ChatView<MessageContent: View, InputViewContent: View, MenuAction:
 
 public extension ChatView {
 
-    func betweenListAndInputViewBuilder<V: View>(_ builder: @escaping ()->V) -> ChatView {
+    func betweenListAndInputViewBuilder(_ builder: @escaping ()->BetweenListAndInputView) -> ChatView {
         var view = self
         view.betweenListAndInputViewBuilder = {
-            AnyView(builder())
+            builder()
         }
         return view
     }
 
-    func mainHeaderBuilder<V: View>(_ builder: @escaping ()->V) -> ChatView {
+    func mainHeaderBuilder(_ builder: @escaping ()->MainHeader) -> ChatView {
         var view = self
         view.mainHeaderBuilder = {
-            AnyView(builder())
+            builder()
         }
         return view
     }
 
-    func headerBuilder<V: View>(_ builder: @escaping (Date)->V) -> ChatView {
+    func headerBuilder(_ builder: @escaping (Date)->Header) -> ChatView {
         var view = self
         view.headerBuilder = { date in
-            AnyView(builder(date))
+            builder(date)
         }
         return view
     }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public extension ChatView where MessageContent == EmptyView {
+public extension ChatView where MessageContent == EmptyView, BetweenListAndInputView == EmptyView, MainHeader == EmptyView, Header == EmptyView {
 
     init(messages: [Message],
          chatType: ChatType = .conversation,
@@ -24,7 +24,7 @@ public extension ChatView where MessageContent == EmptyView {
     }
 }
 
-public extension ChatView where InputViewContent == EmptyView {
+public extension ChatView where InputViewContent == EmptyView, BetweenListAndInputView == EmptyView, MainHeader == EmptyView, Header == EmptyView {
 
     init(messages: [Message],
          chatType: ChatType = .conversation,
@@ -41,7 +41,7 @@ public extension ChatView where InputViewContent == EmptyView {
     }
 }
 
-public extension ChatView where MenuAction == DefaultMessageMenuAction {
+public extension ChatView where MenuAction == DefaultMessageMenuAction, BetweenListAndInputView == EmptyView, MainHeader == EmptyView, Header == EmptyView {
 
     init(messages: [Message],
          chatType: ChatType = .conversation,
@@ -58,7 +58,7 @@ public extension ChatView where MenuAction == DefaultMessageMenuAction {
     }
 }
 
-public extension ChatView where MessageContent == EmptyView, InputViewContent == EmptyView {
+public extension ChatView where MessageContent == EmptyView, InputViewContent == EmptyView, BetweenListAndInputView == EmptyView, MainHeader == EmptyView, Header == EmptyView {
 
     init(messages: [Message],
          chatType: ChatType = .conversation,
@@ -73,7 +73,7 @@ public extension ChatView where MessageContent == EmptyView, InputViewContent ==
     }
 }
 
-public extension ChatView where InputViewContent == EmptyView, MenuAction == DefaultMessageMenuAction {
+public extension ChatView where InputViewContent == EmptyView, MenuAction == DefaultMessageMenuAction, BetweenListAndInputView == EmptyView, MainHeader == EmptyView, Header == EmptyView {
 
     init(messages: [Message],
          chatType: ChatType = .conversation,
@@ -88,7 +88,7 @@ public extension ChatView where InputViewContent == EmptyView, MenuAction == Def
     }
 }
 
-public extension ChatView where MessageContent == EmptyView, MenuAction == DefaultMessageMenuAction {
+public extension ChatView where MessageContent == EmptyView, MenuAction == DefaultMessageMenuAction, BetweenListAndInputView == EmptyView, MainHeader == EmptyView, Header == EmptyView {
 
     init(messages: [Message],
          chatType: ChatType = .conversation,
@@ -103,8 +103,7 @@ public extension ChatView where MessageContent == EmptyView, MenuAction == Defau
     }
 }
 
-public extension ChatView where MessageContent == EmptyView, InputViewContent == EmptyView, MenuAction == DefaultMessageMenuAction {
-
+public extension ChatView where MessageContent == EmptyView, InputViewContent == EmptyView, MenuAction == DefaultMessageMenuAction, BetweenListAndInputView == EmptyView, MainHeader == EmptyView, Header == EmptyView {
     init(messages: [Message],
          chatType: ChatType = .conversation,
          replyMode: ReplyMode = .quote,

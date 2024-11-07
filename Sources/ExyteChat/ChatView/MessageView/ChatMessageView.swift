@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct ChatMessageView<MessageContent: View>: View {
+struct ChatMessageView<MessageContent: View, MainHeader: View, Header: View>: View {
 
-    typealias MessageBuilderClosure = ChatView<MessageContent, EmptyView, DefaultMessageMenuAction>.MessageBuilderClosure
+    typealias MessageBuilderClosure = ChatView<MessageContent, EmptyView, DefaultMessageMenuAction, EmptyView, MainHeader, Header>.MessageBuilderClosure
 
     @ObservedObject var viewModel: ChatViewModel
 

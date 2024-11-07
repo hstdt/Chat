@@ -196,7 +196,6 @@ ChatView(messages: viewModel.messages) { draft in
 When implementing your own `MessageMenuActionClosure`, write a switch statement passing through all the cases of your `MessageMenuAction`, inside each case write your own action handler, or call the default one. NOTE: not all default actions work out of the box - e.g. for `.edit` you'll still need to provide a closure to save the edited text on your BE. Please see CommentsExampleView in ChatExample project for MessageMenuActionClosure usage example.
 
 ## Small view builders:
-These use `AnyView`, so please try to keep them easy enough
 - `betweenListAndInputViewBuilder` - content to display in between the chat list view and the input view   
 - `mainHeaderBuilder` - a header for the whole chat, which will scroll together with all the messages and headers  
 - `headerBuilder` - date section header builder   
